@@ -13,7 +13,7 @@ export default class Map extends React.Component {
     this.state = {
       error: null,
       prevLatLng: {},
-      coordinate: {latitude: LATITUDE, longitude: LONGITUDE}
+      coordinate: { latitude: LATITUDE, longitude: LONGITUDE }
     }
   }
 
