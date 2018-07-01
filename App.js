@@ -1,11 +1,30 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, AppRegistry } from 'react-native';
+import { createStackNavigator } from 'react-navigation';
 
 import Header from './src/components/header';
 import Map from './src/components/map';
 import VehicleInfo from './src/components/vehicle-info';
 import Destination from './src/components/destination';
-import AppNavigator from './src/components/router'
+
+
+const navConfig = {
+  navigation: {
+    VehicleInfo: {
+      screen: VehicleInfo
+    },
+    Destination: {
+      screen: Destination
+    },
+    Map: {
+      screen: Map,
+    }
+  }
+}
+
+export const AppNavigator = createStackNavigator(navConfig.navigation);
+AppRegistry.registerComponent('tripPlanner', () => AppNavigator);
+
 export default class App extends React.Component {
   constructor() {
     super();
@@ -20,6 +39,9 @@ export default class App extends React.Component {
     this.renderMap = this.renderMap.bind(this);
   }
 
+  componentWillMount() {
+    //this.AppNavigator.navigation.navigate('VehicleInfo')
+  }
   renderDestination() {
     this.setState({ renderDestination: true });
   }
@@ -30,6 +52,7 @@ export default class App extends React.Component {
 
   render() {
     return (
+
       <AppNavigator />
       /*
       <View style={styles.container}>

@@ -46,7 +46,8 @@ export default class VehicleInfo extends React.Component {
         )}
         <Button
           style={styles.btn}
-          onPress={this.props.nextStep}
+          //onPress={this.props.nextStep}
+          onPress={() => this.props.navigation.navigate('Destination') }
           title='Next Step'
         />
       </View>
