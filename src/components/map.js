@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE, AnimatedRegion  } from 'react-native-maps';
@@ -24,33 +23,6 @@ export default class Map extends React.Component {
   }
 
   componentWillMount() {
-    /*
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
-          error: null,
-          coordinate : {latitude: position.coords.latitude, longitude: position.coords.longitude}
-        });
-      },
-      (error) => this.setState({ error: error.message }),
-      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
-    );
-    */
-
-
-    navigator.geolocation.getCurrentPosition(
-      position => {},
-      error => alert(error.message),
-      {
-        enableHighAccuracy: true,
-        timeout: 20000,
-        maximumAge: 1000
-      }
-    );
-  }
-  componentDidMount() {
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         const { coordinate } =   this.state;
@@ -70,6 +42,7 @@ export default class Map extends React.Component {
         } else {
           coordinate.timing(newCoordinate).start();
         }
+
         this.setState({
           latitude,
           longitude,
