@@ -39,9 +39,6 @@ export default class App extends React.Component {
     this.renderMap = this.renderMap.bind(this);
   }
 
-  componentWillMount() {
-    //this.AppNavigator.navigation.navigate('VehicleInfo')
-  }
   renderDestination() {
     this.setState({ renderDestination: true });
   }
