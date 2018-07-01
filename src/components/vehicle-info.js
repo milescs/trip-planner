@@ -1,6 +1,32 @@
 import React from 'react';
 import { StyleSheet, TextInput, View, Button, Text } from 'react-native';
 
+// Wh/Mi to Wh/Km = .621371
+// Wh/Km to Wh/Mi = 1.60934
+// Mi to Km = 1.60934
+// Km to Mi = .621371
+
+const vehicles = {
+  "Tesla_Model_S_75D": {
+    'name': 'Tesla Model S 75D',
+    'usableBattery': 72.6,
+    'whMi': 284,
+    'whKm': 177,
+    'maxChargeSpeed': 120, //kW
+    'rangeEpaMi': 256,
+    'rangeEpaKm': 412
+  },
+  "Chevy_Bolt_60": {
+    'name': 'Chevy Bolt EV 60kWh',
+    "usableBattery": 60,
+    'whMi': 250,
+    'whKm': 156,
+    'maxChargeSpeed': 50,
+    'rangeEpaMi': 238,
+    'rangeEpaKm': 383
+  }
+}
+
 const stateInfo = [
   'speedMultiplier',
   'cabinTemp',
@@ -46,7 +72,8 @@ export default class VehicleInfo extends React.Component {
         )}
         <Button
           style={styles.btn}
-          onPress={this.props.nextStep}
+          //onPress={this.props.nextStep}
+          onPress={() => this.props.navigation.navigate('Destination') }
           title='Next Step'
         />
       </View>
