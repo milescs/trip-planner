@@ -1,6 +1,12 @@
+
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { Platform, StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE, AnimatedRegion  } from 'react-native-maps';
+
+const LATITUDE = 37.7749;
+const LONGITUDE = 122.4194;
+const LATITUDE_DELTA = 0.009;
+const LONGITUDE_DELTA = 0.009;
 
 export default class Map extends React.Component {
   constructor(props) {
@@ -9,41 +15,100 @@ export default class Map extends React.Component {
       latitude: null,
       longitude: null,
       error: null,
+      prevLatLng: {},
+      coordinate: new AnimatedRegion({
+        latitude: LATITUDE,
+        longitude: LONGITUDE
+      })
     }
   }
 
-  componentDidMount() {
+  componentWillMount() {
+    /*
     navigator.geolocation.getCurrentPosition(
       (position) => {
         this.setState({
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
           error: null,
+          coordinate : {latitude: position.coords.latitude, longitude: position.coords.longitude}
         });
       },
       (error) => this.setState({ error: error.message }),
       { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 },
     );
+    */
+
+
+    navigator.geolocation.getCurrentPosition(
+      position => {},
+      error => alert(error.message),
+      {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 1000
+      }
+    );
   }
+  componentDidMount() {
+    this.watchID = navigator.geolocation.watchPosition(
+      position => {
+        const { coordinate } =   this.state;
+        const { latitude, longitude } = position.coords;
+
+        const newCoordinate = {
+          latitude,
+          longitude
+        };
+        if (Platform.OS === "android") {
+          if (this.marker) {
+            this.marker._component.animateMarkerToCoordinate(
+              newCoordinate,
+              500
+            );
+          }
+        } else {
+          coordinate.timing(newCoordinate).start();
+        }
+        this.setState({
+          latitude,
+          longitude,
+          prevLatLng: newCoordinate
+        });
+      },
+      error => console.log(error),
+      { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+    );
+  }
+
+  getMapRegion = () => ({
+    latitude: this.state.latitude,
+    longitude: this.state.longitude,
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA
+  })
   render() {
     console.log('this.props ', this.props);
     return (
       <View style={styles.container}>
         <MapView
-          showUserLocation={true}
-          showsMyLocationButton={true}
-          showsTraffic={true}
+          showUserLocation
+          showsMyLocationButton
+          showsTraffic
+          followUserLocation
           provider={PROVIDER_GOOGLE}
           style={styles.map}
           initialRegion={{
-            latitude: this.state.latitude,
-            longitude: this.state.longitude,
-            latitudeDelta: 0.0922,
-            longitudeDelta: 0.0421
+            latitude: LATITUDE,
+            longitude: LONGITUDE,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA
           }}
-        />
-        <Text>{this.state.latitude}</Text>
-        <Text>{this.state.longitude}</Text>
+          region={this.getMapRegion()}
+        >
+        </MapView>
+        <Text>Lat: {this.state.latitude}</Text>
+        <Text>Long: {this.state.longitude}</Text>
       </View>
     );
   }
