@@ -11,8 +11,6 @@ export default class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: null,
-      longitude: null,
       error: null,
       prevLatLng: {},
       coordinate: {latitude: LATITUDE, longitude: LONGITUDE}
@@ -26,8 +24,6 @@ export default class Map extends React.Component {
         const newCoordinate = { latitude: position.coords.latitude, longitude: position.coords.longitude }
 
         this.setState({
-          latitude: position.coords.latitude,
-          longitude: position.coords.longitude,
           prevLatLng: oldCoordinate,
           coordinate: newCoordinate
         });
@@ -47,8 +43,8 @@ export default class Map extends React.Component {
       }
     } else {
       return {
-        latitude: this.state.latitude,
-        longitude: this.state.longitude,
+        latitude: this.state.coordinate.latitude,
+        longitude: this.state.coordinate.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
       }
@@ -76,8 +72,8 @@ export default class Map extends React.Component {
         >
           <Marker coordinate={this.state.coordinate}></Marker>
         </MapView>
-        <Text>Lat: {this.state.latitude}</Text>
-        <Text>Long: {this.state.longitude}</Text>
+        <Text>Lat: {this.state.coordinate.latitude}</Text>
+        <Text>Long: {this.state.coordinate.longitude}</Text>
       </View>
     );
   }
