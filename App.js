@@ -5,7 +5,7 @@ import Header from './src/components/header';
 import Map from './src/components/map';
 import VehicleInfo from './src/components/vehicle-info';
 import Destination from './src/components/destination';
-
+import AppNavigator from './src/components/router'
 export default class App extends React.Component {
   constructor() {
     super();
@@ -30,6 +30,8 @@ export default class App extends React.Component {
 
   render() {
     return (
+      <AppNavigator />
+      /*
       <View style={styles.container}>
         <Header />
         <VehicleInfo nextStep={this.renderDestination}/>
@@ -39,7 +41,7 @@ export default class App extends React.Component {
         {this.state.renderMap && (
           <Map beginCoords={this.state.beginCoords} endCoords={this.state.endCoords}/>
         )}
-      </View>
+      </View> */
     );
   }
 }
