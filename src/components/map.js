@@ -1,6 +1,6 @@
 import React from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-import MapView, { Marker, PROVIDER_GOOGLE, AnimatedRegion  } from 'react-native-maps';
+import { StyleSheet, Text, View } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE  } from 'react-native-maps';
 
 const LATITUDE = 37.7749;
 const LONGITUDE = 122.4194;
@@ -11,42 +11,21 @@ export default class Map extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      latitude: null,
-      longitude: null,
       error: null,
       prevLatLng: {},
-      coordinate: new AnimatedRegion({
-        latitude: LATITUDE,
-        longitude: LONGITUDE
-      })
+      coordinate: { latitude: LATITUDE, longitude: LONGITUDE }
     }
   }
 
   componentWillMount() {
     this.watchID = navigator.geolocation.watchPosition(
       position => {
-        const { coordinate } =   this.state;
-        const { latitude, longitude } = position.coords;
-
-        const newCoordinate = {
-          latitude,
-          longitude
-        };
-        if (Platform.OS === "android") {
-          if (this.marker) {
-            this.marker._component.animateMarkerToCoordinate(
-              newCoordinate,
-              500
-            );
-          }
-        } else {
-          coordinate.timing(newCoordinate).start();
-        }
+        const oldCoordinate = this.state.coordinate
+        const newCoordinate = { latitude: position.coords.latitude, longitude: position.coords.longitude }
 
         this.setState({
-          latitude,
-          longitude,
-          prevLatLng: newCoordinate
+          prevLatLng: oldCoordinate,
+          coordinate: newCoordinate
         });
       },
       error => console.log(error),
@@ -64,8 +43,8 @@ export default class Map extends React.Component {
       }
     } else {
       return {
-        latitude: this.state.latitude,
-        longitude: this.state.longitude,
+        latitude: this.state.coordinate.latitude,
+        longitude: this.state.coordinate.longitude,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
       }
@@ -91,9 +70,10 @@ export default class Map extends React.Component {
           }}
           region={this.getMapRegion()}
         >
+          <Marker coordinate={this.state.coordinate}></Marker>
         </MapView>
-        <Text>Lat: {this.state.latitude}</Text>
-        <Text>Long: {this.state.longitude}</Text>
+        <Text>Lat: {this.state.coordinate.latitude}</Text>
+        <Text>Long: {this.state.coordinate.longitude}</Text>
       </View>
     );
   }
