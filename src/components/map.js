@@ -81,12 +81,24 @@ export default class Map extends React.Component {
     );
   }
 
-  getMapRegion = () => ({
-    latitude: this.state.latitude,
-    longitude: this.state.longitude,
-    latitudeDelta: LATITUDE_DELTA,
-    longitudeDelta: LONGITUDE_DELTA
-  })
+  getMapRegion = () => {
+    if(this.state.latitude == null || this.state.longitude == null) {
+      return {
+        latitude: LATITUDE,
+        longitude: LONGITUDE,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      }
+    } else {
+      return {
+        latitude: this.state.latitude,
+        longitude: this.state.longitude,
+        latitudeDelta: LATITUDE_DELTA,
+        longitudeDelta: LONGITUDE_DELTA
+      }
+    }
+  }
+
   render() {
     console.log('this.props ', this.props);
     return (
