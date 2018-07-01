@@ -61,7 +61,6 @@ export default class VehicleInfo extends React.Component {
         {stateInfo.map((name, index) =>
           <View style={styles.fieldWrapper} key={index}>
             <Text style={styles.fieldName}>{name}:</Text>
-            <Text>{vehicles.Chevy_Bolt_60.usableBattery}</Text>
             <TextInput
               style={styles.input}
               keyboardType='numeric'
