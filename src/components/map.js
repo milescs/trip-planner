@@ -124,7 +124,6 @@ export default class Map extends React.Component {
         <Text>Lat: {this.state.coordinate.latitude}</Text>
         <Text>Long: {this.state.coordinate.longitude}</Text>
 
-
         { this.state.apiData.fuel_stations.map( ( data ) => {
           return(
             <Text key={data.id}>{data.id}</Text>
