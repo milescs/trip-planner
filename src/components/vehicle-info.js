@@ -5,7 +5,7 @@ import { StyleSheet, TextInput, View, Button, Text } from 'react-native';
 // Wh/Km to Wh/Mi = 1.60934
 // Mi to Km = 1.60934
 // Km to Mi = .621371
-
+// todo refactor to make it so we can remotely add vehicles  - would need server
 const vehicles = {
   "Tesla_Model_S_75D": {
     'name': 'Tesla Model S 75D',

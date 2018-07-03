@@ -1,6 +1,8 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE  } from 'react-native-maps';
+import { buildApiString } from "./doe-api"
+import axios from "axios/index"
 
 const LATITUDE = 37.7749;
 const LONGITUDE = 122.4194;
@@ -13,11 +15,28 @@ export default class Map extends React.Component {
     this.state = {
       error: null,
       prevLatLng: {},
-      coordinate: { latitude: LATITUDE, longitude: LONGITUDE }
+      coordinate: { latitude: LATITUDE, longitude: LONGITUDE },
+      apiData: {}
     }
   }
 
-  componentWillMount() {
+  callApi(apiString) {
+    let self = this
+    axios.get(apiString)
+      .then((response) => self.setState( { apiData: response.data } ))
+      .catch((error) => console.log(error))
+  }
+
+  getLevel3StationsNearMe(zip) {
+    let apiOptions = { zip,
+                      ev_charging_level: "dc_fast" }
+    let apiString = buildApiString(apiOptions)
+
+    this.callApi(apiString)
+  }
+
+  componentDidMount() {
+    this.getLevel3StationsNearMe("95687")
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         const oldCoordinate = this.state.coordinate
@@ -52,7 +71,6 @@ export default class Map extends React.Component {
   }
 
   render() {
-    console.log('this.props ', this.props);
     return (
       <View style={styles.container}>
         <MapView
