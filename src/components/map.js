@@ -5,7 +5,7 @@ import { buildApiString } from "./doe-api"
 import axios from "axios/index"
 
 const LATITUDE = 37.7749;
-const LONGITUDE = 122.4194;
+const LONGITUDE = -122.4194;
 const LATITUDE_DELTA = 0.009;
 const LONGITUDE_DELTA = 0.009;
 
