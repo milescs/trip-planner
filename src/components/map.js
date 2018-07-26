@@ -25,7 +25,7 @@ export default class Map extends React.Component {
   callApi(apiString) {
     axios.get(apiString)
       .then((response) => {
-        console.log(response.data)
+        console.log(response.data);
         this.setState( { apiData: response.data } )
       } )
       .catch((error) => console.log(error))
@@ -34,9 +34,10 @@ export default class Map extends React.Component {
   getCcsStations() {
     const apiOptions = {
       ev_connector_type: "J1772COMBO",
+      limit: "20"
     };
 
-    const apiString = buildApiString(apiOptions)
+    const apiString = buildApiString(apiOptions);
 
     this.callApi(apiString)
   }
@@ -45,7 +46,7 @@ export default class Map extends React.Component {
     const apiOptions = { zip,
                       ev_charging_level: "dc_fast",
                       limit: "20"}
-    const apiString = buildApiString(apiOptions)
+    const apiString = buildApiString(apiOptions);
 
     this.callApi(apiString)
   }
@@ -70,7 +71,7 @@ export default class Map extends React.Component {
   }
 
   componentDidMount() {
-    this.getCcsStations();
+    // this.getCcsStations();
     this.watchID = navigator.geolocation.watchPosition(
       position => {
         console.log("current user position: ", position);
@@ -123,6 +124,7 @@ export default class Map extends React.Component {
           }}
           region={this.getMapRegion()}
         >
+            {/*
           <Marker coordinate={this.state.coordinate}></Marker>
 
           {this.state.apiData.fuel_stations.map( ( data, index) => {
@@ -131,7 +133,7 @@ export default class Map extends React.Component {
               <Marker key={index} coordinate={coordinate} pinColor="blue" />
             )
           })}
-
+          */}
         </MapView>
 
         {/*

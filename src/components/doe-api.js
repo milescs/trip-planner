@@ -1,7 +1,7 @@
 import { DOE_KEY } from "./api-keys";
 
 export const doeApiOptions = {
-  apiKey: apiKey,
+  apiKey: DOE_KEY,
   status: ["all", "E", "P", "T"], // E = open, P = Planned, T = Temp unavail
   ev_network: ["all",
     "AeroVironment Network",
@@ -18,7 +18,7 @@ export const doeApiOptions = {
   ev_connector_type: ["all", "NEMA515", "NEMA520", "NEMA1450", "J1772", "CHADEMO", "J1772COMBO", "TESLA"]
 };
 
-export const buildApiString = ( apiOptions ) => {
+export const buildApiString = apiOptions => {
   let apiString = "https://developer.nrel.gov/api/alt-fuel-stations/v1.json?api_key=" + DOE_KEY + "&fuel_type=ELEC&access=public"
 
   if(apiOptions.limit !== undefined) {
