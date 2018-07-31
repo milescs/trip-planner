@@ -5,8 +5,8 @@ import axios from "axios/index";
 import get from "lodash/get";
 
 import { buildApiString } from "./doe-api";
+import { getZipCode } from './google-maps-api';
 
-// import { getZipCode } from './google-maps-api'
 
 const LATITUDE = 37.7749;
 const LONGITUDE = -122.4194;
@@ -21,14 +21,13 @@ export default class Map extends React.Component {
       prevLatLng: {},
       coordinate: { latitude: LATITUDE, longitude: LONGITUDE },
       apiData: { fuel_stations: [ { latitude: 0, longitude: 0 } ] },
-      currentZipCode: ''
+      currZipCode: ''
     }
   }
 
   callApi(apiString) {
     axios.get(apiString)
     .then(res => {
-      console.log(res.data);
       this.setState( { apiData: res.data } )
     })
     .catch(error => console.log(error));
@@ -59,10 +58,10 @@ export default class Map extends React.Component {
   // calculate straight line coordinates between two coordinates
   calcCrow(startCoords, stopCoords) {
     const R = 6371; // km
-    const dLat = this.toRad(stopCoords.latitude - startCoords.latitude)
-    const dLon = this.toRad(stopCoords.longitude - startCoords.longitude)
-    const lat1 = (startCoords.latitude)
-    const lat2 = this.toRad(stopCoords.latitude)
+    const dLat = this.toRad(stopCoords.latitude - startCoords.latitude);
+    const dLon = this.toRad(stopCoords.longitude - startCoords.longitude);
+    const lat1 = (startCoords.latitude);
+    const lat2 = this.toRad(stopCoords.latitude);
     const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
       Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
@@ -75,16 +74,19 @@ export default class Map extends React.Component {
     return Value * Math.PI / 180;
   }
 
-  componentDidMount() {
+  componentWillMount() {
     this.watchID = navigator.geolocation.watchPosition(
       position => {
-        const oldCoordinate = this.state.coordinate;
         const coords = get(position, "coords", {});
-        const newCoordinate = { latitude: coords.latitude, longitude: coords.longitude };
+        const newCoordinate = {
+          latitude: coords.latitude,
+          longitude: coords.longitude
+        };
 
         this.setState({
-          prevLatLng: oldCoordinate,
-          coordinate: newCoordinate
+          prevLatLng: this.state.coordinate,
+          coordinate: newCoordinate,
+          currZipCode: getZipCode(newCoordinate)
         });
       },
       error => console.log(error),
@@ -92,26 +94,17 @@ export default class Map extends React.Component {
     );
   }
 
-  getMapRegion = () => {
-    console.log('this.state ', this.state);
-    if (this.state.latitude === null || this.state.longitude === null) {
-      return {
-        latitude: LATITUDE,
-        longitude: LONGITUDE,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA
-      }
-    } else {
-      return {
-        latitude: this.state.coordinate.latitude,
-        longitude: this.state.coordinate.longitude,
-        latitudeDelta: LATITUDE_DELTA,
-        longitudeDelta: LONGITUDE_DELTA
-      }
+  getMapRegion() {
+    return {
+      latitude: this.state.coordinate.latitude,
+      longitude: this.state.coordinate.longitude,
+      latitudeDelta: LATITUDE_DELTA,
+      longitudeDelta: LONGITUDE_DELTA
     }
   };
 
   render() {
+    console.log('this ', this.state);
     return (
       <View style={styles.container}>
         <MapView
@@ -121,12 +114,7 @@ export default class Map extends React.Component {
           followUserLocation
           provider={PROVIDER_GOOGLE}
           style={styles.map}
-          initialRegion={{
-            latitude: LATITUDE,
-            longitude: LONGITUDE,
-            latitudeDelta: LATITUDE_DELTA,
-            longitudeDelta: LONGITUDE_DELTA
-          }}
+          initialRegion={this.getMapRegion()}
           region={this.getMapRegion()}
         >
           <Marker coordinate={this.state.coordinate} />
