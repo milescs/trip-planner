@@ -1,8 +1,11 @@
 import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE  } from 'react-native-maps';
-import { buildApiString } from "./doe-api"
-import axios from "axios/index"
+import axios from "axios/index";
+import get from "lodash/get";
+
+import { buildApiString } from "./doe-api";
+
 // import { getZipCode } from './google-maps-api'
 
 const LATITUDE = 37.7749;
@@ -24,11 +27,11 @@ export default class Map extends React.Component {
 
   callApi(apiString) {
     axios.get(apiString)
-      .then((response) => {
-        console.log(response.data);
-        this.setState( { apiData: response.data } )
-      } )
-      .catch((error) => console.log(error))
+    .then(res => {
+      console.log(res.data);
+      this.setState( { apiData: res.data } )
+    })
+    .catch(error => console.log(error));
   }
 
   getCcsStations() {
@@ -43,12 +46,14 @@ export default class Map extends React.Component {
   }
 
   getLevel3StationsNearMe(zip) {
-    const apiOptions = { zip,
-                      ev_charging_level: "dc_fast",
-                      limit: "20"}
+    const apiOptions = {
+      zip,
+      ev_charging_level: "dc_fast",
+      limit: "20"
+    }
     const apiString = buildApiString(apiOptions);
 
-    this.callApi(apiString)
+    this.callApi(apiString);
   }
 
   // calculate straight line coordinates between two coordinates
@@ -71,12 +76,11 @@ export default class Map extends React.Component {
   }
 
   componentDidMount() {
-    // this.getCcsStations();
     this.watchID = navigator.geolocation.watchPosition(
       position => {
-        console.log("current user position: ", position);
-        const oldCoordinate = this.state.coordinate
-        const newCoordinate = { latitude: position.coords.latitude, longitude: position.coords.longitude }
+        const oldCoordinate = this.state.coordinate;
+        const coords = get(position, "coords", {});
+        const newCoordinate = { latitude: coords.latitude, longitude: coords.longitude };
 
         this.setState({
           prevLatLng: oldCoordinate,
@@ -89,7 +93,8 @@ export default class Map extends React.Component {
   }
 
   getMapRegion = () => {
-    if(this.state.latitude == null || this.state.longitude == null) {
+    console.log('this.state ', this.state);
+    if (this.state.latitude === null || this.state.longitude === null) {
       return {
         latitude: LATITUDE,
         longitude: LONGITUDE,
@@ -124,8 +129,8 @@ export default class Map extends React.Component {
           }}
           region={this.getMapRegion()}
         >
+          <Marker coordinate={this.state.coordinate} />
             {/*
-          <Marker coordinate={this.state.coordinate}></Marker>
 
           {this.state.apiData.fuel_stations.map( ( data, index) => {
             let coordinate = {latitude: data.latitude, longitude: data.longitude}

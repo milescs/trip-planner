@@ -34,7 +34,6 @@ export default class Destination extends React.Component {
           value={this.state.end}
         />
         <Button
-          //onPress={this.updateDestinationInfo}
           onPress = {() => this.props.navigation.navigate('Map')}
           title='Continue'
         />
