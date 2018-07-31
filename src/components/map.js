@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
 import MapView, { Marker, PROVIDER_GOOGLE  } from 'react-native-maps';
 import { buildApiString } from "./doe-api"
 import axios from "axios/index"
-import getZipCode from 'google-maps-api'
+// import { getZipCode } from './google-maps-api'
 
 const LATITUDE = 37.7749;
 const LONGITUDE = -122.4194;
@@ -23,41 +23,41 @@ export default class Map extends React.Component {
   }
 
   callApi(apiString) {
-    let self = this
     axios.get(apiString)
       .then((response) => {
-        // console.log(response.data)
-        self.setState( { apiData: response.data } )
+        console.log(response.data);
+        this.setState( { apiData: response.data } )
       } )
       .catch((error) => console.log(error))
   }
 
+  getCcsStations() {
+    const apiOptions = {
+      ev_connector_type: "J1772COMBO",
+      limit: "20"
+    };
+
+    const apiString = buildApiString(apiOptions);
+
+    this.callApi(apiString)
+  }
 
   getLevel3StationsNearMe(zip) {
-    let apiOptions = { zip,
+    const apiOptions = { zip,
                       ev_charging_level: "dc_fast",
-                      limit: "5"}
-    let apiString = buildApiString(apiOptions)
+                      limit: "20"}
+    const apiString = buildApiString(apiOptions);
 
     this.callApi(apiString)
   }
 
   // calculate straight line coordinates between two coordinates
   calcCrow(startCoords, stopCoords) {
-    // startCoords {latitude, longitude}
-    // stopCoords {latitude, longitude}
     const R = 6371; // km
-    //const dLat = toRad(lat2-lat1);
-    const dLat = toRad(stopCoords.latitude - startCoords.latitude)
-    //const dLon = toRad(lon2-lon1);
-    const dLon = toRad(stopCoords.longitude - startCoords.longitude)
-
-    // const lat1 = toRad(lat1);
+    const dLat = this.toRad(stopCoords.latitude - startCoords.latitude)
+    const dLon = this.toRad(stopCoords.longitude - startCoords.longitude)
     const lat1 = (startCoords.latitude)
-
-    //const lat2 = toRad(lat2);
-    const lat2 = toRad(stopCoords.latitude)
-
+    const lat2 = this.toRad(stopCoords.latitude)
     const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
       Math.sin(dLon/2) * Math.sin(dLon/2) * Math.cos(lat1) * Math.cos(lat2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
@@ -70,12 +70,11 @@ export default class Map extends React.Component {
     return Value * Math.PI / 180;
   }
 
-
   componentDidMount() {
-    this.getLevel3StationsNearMe("94016")
+    // this.getCcsStations();
     this.watchID = navigator.geolocation.watchPosition(
       position => {
-        console.log(position)
+        console.log("current user position: ", position);
         const oldCoordinate = this.state.coordinate
         const newCoordinate = { latitude: position.coords.latitude, longitude: position.coords.longitude }
 
@@ -105,7 +104,7 @@ export default class Map extends React.Component {
         longitudeDelta: LONGITUDE_DELTA
       }
     }
-  }
+  };
 
   render() {
     return (
@@ -125,6 +124,7 @@ export default class Map extends React.Component {
           }}
           region={this.getMapRegion()}
         >
+            {/*
           <Marker coordinate={this.state.coordinate}></Marker>
 
           {this.state.apiData.fuel_stations.map( ( data, index) => {
@@ -133,13 +133,16 @@ export default class Map extends React.Component {
               <Marker key={index} coordinate={coordinate} pinColor="blue" />
             )
           })}
-
+          */}
         </MapView>
+
+        {/*
         <TextInput onChangeText={(currentZipCode) => this.setState({currentZipCode})}
                    value={this.state.currentZipCode} ></TextInput>
-        <Button onPress={ this.getLevel3StationsNearMe.bind(this, this.state.currentZipCode)} title="Refresh" />
+         <Button onPress={ this.getLevel3StationsNearMe.bind(this, this.state.currentZipCode)} title="Refresh" />
         <Text>Lat: {this.state.coordinate.latitude}</Text>
         <Text>Long: {this.state.coordinate.longitude}</Text>
+
 
         { this.state.apiData.fuel_stations.map( ( data ) => {
           return(
@@ -148,6 +151,7 @@ export default class Map extends React.Component {
         })
 
         }
+        */}
       </View>
     );
   }

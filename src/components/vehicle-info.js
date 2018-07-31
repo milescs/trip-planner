@@ -25,7 +25,7 @@ const vehicles = {
     'rangeEpaMi': 238,
     'rangeEpaKm': 383
   }
-}
+};
 
 const stateInfo = [
   'speedMultiplier',

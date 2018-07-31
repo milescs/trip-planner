@@ -7,7 +7,7 @@ export default class Destination extends React.Component {
     this.state = {
       begin: 'begin',
       end: 'end'
-    }
+    };
     this.updateDestinationInfo = this.updateDestinationInfo.bind(this);
   }
 
